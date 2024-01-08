@@ -59,7 +59,18 @@ router.post(
           res.status(500).send("Error al insertar platillo");
         } else {
           console.log(`Platillo ${nombre} insertado correctamente`);
-          res.status(200).send("Platillo insertado correctamente");
+          const insertedId = this.lastID;
+          const nuevoPlatillo = {
+            id: insertedId,
+            nombre: nombre,
+            descripcion: descripcion,
+            ingredientes: ingredientes,
+            foto: foto,
+          };
+          res.status(200).json({
+            message: "Platillo insertado correctamente",
+            platillo: nuevoPlatillo,
+          });
         }
       }
     );

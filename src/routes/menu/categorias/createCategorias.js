@@ -59,7 +59,15 @@ router.post(
           return res.status(500).send("Error al insertar categoría");
         } else {
           console.log(`Categoría ${nombre} insertada correctamente`);
-          res.status(200).send("Categoría insertada correctamente");
+          const insertedId = this.lastID;
+          const nuevoPlatillo = {
+            id: insertedId,
+            nombre: nombre,
+            descripcion: descripcion,
+            platillos:platillos,
+            foto: foto,
+          };
+          res.status(200).send({mensaje:"Categoría insertada correctamente",categoria: nuevoPlatillo,});
         }
       }
     );
