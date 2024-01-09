@@ -1,6 +1,9 @@
 const express = require("express");
 const db = require("../../conexionDB");
 const jwt = require("jsonwebtoken");
+const { consultaPedidos } = require("../../controllers/consultaPedidos");
+const { consulta } = require("../../controllers/consultaInventario");
+const { actualizarDetallesDB } = require("../../controllers/actualizarPedidos");
 require("dotenv").config();
 const router = express.Router();
 
@@ -29,9 +32,10 @@ function verificarToken(req, res, next) {
 // Endpoint para actualizar varios platillos en un pedido existente
 // Método PUT para actualizar un pedido existente
 router.put("/actualizarPedido/:idPedido", verificarToken, async (req, res) => {
-  const { idPedido } = req.params;
+  let { idPedido } = req.params;
   const { detalles } = req.body;
-
+  idPedido = parseInt(idPedido);
+  console.log(idPedido);
   if (!detalles || detalles.length === 0) {
     return res
       .status(400)
@@ -39,28 +43,36 @@ router.put("/actualizarPedido/:idPedido", verificarToken, async (req, res) => {
   }
 
   try {
-    // Verificar si el pedido existe
-    const selectPedidoQuery = "SELECT * FROM pedidos WHERE id = ?";
-    const pedido = await db.get(selectPedidoQuery, [idPedido]);
-
-    if (!pedido) {
+    const respuesta = await consultaPedidos(idPedido);
+    if (!respuesta) {
       return res.status(404).json({ message: "El pedido no existe." });
     }
+    const updatedDetails = [];
+    for (let i = 0; i < detalles.length; i++) {
+      const { platillo, nuevaCantidad } = detalles[i];
+      // const inventarioValue = platillo;
 
-    // Actualizar cada detalle del pedido
-    for (const detalle of detalles) {
-      const { platillo, nuevaCantidad } = detalle;
+      const response = await consulta(detalles[i].inventario);
+      console.log(response, " datos2");
+      if (
+        !response ||
+        response.length === 0 ||
+        response.cantidad < nuevaCantidad
+      ) {
+        return res.status(404).json({
+          message: `La cantidad disponible del platillo ${platillo} es menor a la cantidad solicitada o no disponible en el inventario`,
+        });
+      }
 
-      // Verificar si el platillo existe en el pedido y actualizar la cantidad
-      const updateDetalleQuery =
-        "UPDATE pedidos SET cantidad = ? WHERE id = ? AND platillos = ?";
-      await db.run(updateDetalleQuery, [nuevaCantidad, idPedido, platillo]);
+      await actualizarDetallesDB(idPedido, detalles);
+      updatedDetails.push({ platillo, nuevaCantidad });
     }
 
-    console.log("Pedido actualizado correctamente");
-    res
-      .status(200)
-      .json({ message: "Pedido actualizado correctamente", idPedido });
+    res.status(200).json({
+      message: "Pedidos actualizados correctamente",
+      idPedido,
+      updatedDetails,
+    });
   } catch (error) {
     console.error("Error al actualizar el pedido:", error);
     return res.status(500).json({ message: "Error al actualizar el pedido." });
