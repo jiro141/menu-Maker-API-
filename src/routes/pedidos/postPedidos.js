@@ -39,10 +39,10 @@ router.post("/crearPedido", verificarToken, async (req, res) => {
   try {
     const resultadosConsultas = await Promise.all(
       detalles.map(async (detalle) => {
-        const { platillo, cantidad, inventario } = detalle;
-
+        const { platillo, cantidad } = detalle;
+        console.log(platillo, "datos de inventario");
         try {
-          const respuesta = await consulta(inventario);
+          const respuesta = await consulta(platillo);
 
           if (!respuesta) {
             throw new Error("El platillo no existe en el inventario.");
@@ -56,7 +56,7 @@ router.post("/crearPedido", verificarToken, async (req, res) => {
 
           const updateQuery =
             "UPDATE inventario SET cantidad = cantidad - ? WHERE id = ?";
-          await db.run(updateQuery, [cantidad, inventario]);
+          await db.run(updateQuery, [cantidad, platillo]);
 
           return { platillo, cantidad };
         } catch (error) {
@@ -73,7 +73,6 @@ router.post("/crearPedido", verificarToken, async (req, res) => {
     const cantidades = resultadosConsultas.map(
       (resultado) => resultado.cantidad
     );
-
     const insertQuery =
       "INSERT INTO pedidos (estado, platillos, cantidad) VALUES (?, ?, ?)";
     db.run(

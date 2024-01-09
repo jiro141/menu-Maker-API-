@@ -22,6 +22,8 @@ const getInventario = require("./routes/inventario/getInventario");
 const userRoutes = require("./routes/userRoutes");
 const postPedidos = require("./routes/pedidos/postPedidos");
 const putPedidos = require("./routes/pedidos/putPedidos");
+const deletePedidos = require("./routes/pedidos/deletePedidos");
+const getPedidos = require('./routes/pedidos/getPedidos')
 const app = express();
 
 // Middleware para analizar datos JSON
@@ -31,7 +33,7 @@ app.use(express.json());
 app.use(cors());
 // resetInventario();
 // Rutas
-app.use(putPedidos)
+app.use(putPedidos);
 app.use(userRoutes);
 app.use(login);
 app.use(createPlatillos);
@@ -51,7 +53,8 @@ app.use(putInventario);
 app.use(deleteInventario);
 app.use(getInventario);
 app.use(postPedidos);
-
+app.use(deletePedidos)
+app.use(getPedidos);
 
 const PORT = 5000;
 app.listen(PORT, () => {
