@@ -44,14 +44,9 @@ router.get("/Pedidos", verificarToken, async (req, res) => {
 
       const platillos = rows.map((platillo) => platillo.platillos);
       console.log(platillos.length);
-      for (let index = 0; index < platillos.length; index++) {
-        const element = platillos[index];
-        const platillosIndividuales = element.map((platillo) =>
+      const platillosIndividuales = platillos.map((platillo) =>
         platillo.split(",").map(Number)
-        console.log();
       );
-        
-      }
 
       console.log(
         "Lista de pedidos obtenida correctamente",
@@ -63,7 +58,7 @@ router.get("/Pedidos", verificarToken, async (req, res) => {
         console.log(response.length, "respuesta");
         for (let index = 0; index < response.length; index++) {
           const element = response[index];
-          console.log(element, 'prueba');
+          console.log(element, "prueba");
         }
         const pedidosConPlatillos = [];
 

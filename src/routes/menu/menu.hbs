@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{nombre}}</title>
+    <!-- Estilos CSS básicos para mejorar la apariencia del menú -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        .menu-banner {
+            width: 100%; /* Ajusta según tus necesidades */
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .categoria {
+            margin-bottom: 20px;
+        }
+
+        .categoria img {
+            width: 100%; /* Ajusta según tus necesidades */
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .platillo {
+            background-color: #ddd;
+            margin-bottom: 5px;
+            padding: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .platillo img {
+            width: 50px; /* Ajusta según tus necesidades */
+            height: 50px; /* Ajusta según tus necesidades */
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <img class="menu-banner" src="../../images/menu/banner/{{banner}}" alt="Banner del Menú">
+        <h1>{{nombre}}</h1>
+        {{#each categorias}}
+            <div class="categoria">
+                {{#if foto}}
+                    <img src="../../images/menu/categorias/{{foto}}" alt="{{categoria}}">
+                {{/if}}
+                <h2>{{categoria}}</h2>
+                <ul>
+                    {{#each platillos}}
+                        <li class="platillo">
+                            {{#if foto}}
+                                <img src="../../images/menu/platillos/{{foto}}" alt="{{nombre}}">
+                            {{/if}}
+                            {{nombre}}
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+        {{/each}}
+    </div>
+</body>
+</html>

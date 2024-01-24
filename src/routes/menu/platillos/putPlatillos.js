@@ -64,7 +64,7 @@ router.put(
       // Comparar los datos nuevos con los existentes y actualizar solo los enviados en la solicitud
       const { nombre, descripcion, ingredientes } = req.body;
       const foto = req.file ? req.file.path : null;
-
+      console.log(req.file, 'fotojajaja');
       // Construcción de la consulta de actualización
       let updateFields = [];
       let params = [];

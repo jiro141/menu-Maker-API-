@@ -56,7 +56,7 @@ router.post(
       function (err) {
         if (err) {
           console.error("Error al insertar categoría:", err);
-          return res.status(500).send("Error al insertar categoría");
+          return res.status(500).send("Error al insertar categoría, posible nombre repetido");
         } else {
           console.log(`Categoría ${nombre} insertada correctamente`);
           const insertedId = this.lastID;

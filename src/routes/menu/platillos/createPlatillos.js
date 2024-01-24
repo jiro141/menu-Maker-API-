@@ -45,7 +45,7 @@ router.post(
   upload.single("foto"), // Middleware de Multer para manejar una sola imagen
   async (req, res) => {
     const { nombre, descripcion, ingredientes } = req.body;
-
+    console.log(req.file);
     const foto = req.file ? req.file.path : null;
 
     const insertQuery =
@@ -56,7 +56,9 @@ router.post(
       function (err) {
         if (err) {
           console.error("Error al insertar platillo:", err);
-          res.status(500).send("Error al insertar platillo");
+          res
+            .status(500)
+            .json({ success: false, message: "Error al insertar platillo" });
         } else {
           console.log(`Platillo ${nombre} insertado correctamente`);
           const insertedId = this.lastID;
@@ -68,6 +70,7 @@ router.post(
             foto: foto,
           };
           res.status(200).json({
+            success: true,
             message: "Platillo insertado correctamente",
             platillo: nuevoPlatillo,
           });
