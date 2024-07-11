@@ -2,6 +2,7 @@ const express = require("express");
 const db = require("../../../conexionDB");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
+const uploadToImgur = require('../../../controllers/imgurUploader');
 require("dotenv").config();
 const router = express.Router();
 
@@ -27,16 +28,8 @@ function verificarToken(req, res, next) {
   });
 }
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./src/images/menu/platillos");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
+// Configuración de Multer para manejar una sola imagen en memoria
+const upload = multer(); 
 
 router.put(
   "/editPlatillo/:id",
@@ -47,7 +40,7 @@ router.put(
 
     // Consulta para obtener los datos actuales del platillo
     const selectQuery = "SELECT * FROM platillos WHERE id = ?";
-    db.get(selectQuery, [platilloId], function (err, row) {
+    db.get(selectQuery, [platilloId], async function (err, row) {
       if (err) {
         console.error(`Error al obtener platillo con ID ${platilloId}:`, err);
         return res
@@ -63,8 +56,11 @@ router.put(
 
       // Comparar los datos nuevos con los existentes y actualizar solo los enviados en la solicitud
       const { nombre, descripcion, ingredientes } = req.body;
-      const foto = req.file ? req.file.path : null;
-      console.log(req.file, 'fotojajaja');
+      const foto = req.file ? req.file.buffer : null;
+      
+      // Subir la nueva foto a Imgur
+      const imgurResponse = await uploadToImgur(foto, req.file.originalname);
+
       // Construcción de la consulta de actualización
       let updateFields = [];
       let params = [];
@@ -86,7 +82,7 @@ router.put(
 
       if (foto && foto !== row.foto) {
         updateFields.push("foto = ?");
-        params.push(foto);
+        params.push(imgurResponse.data.link); // Utiliza el enlace de Imgur
       }
 
       if (updateFields.length === 0) {
@@ -119,7 +115,7 @@ router.put(
           nombre: nombre || row.nombre,
           descripcion: descripcion || row.descripcion,
           ingredientes: ingredientes || row.ingredientes,
-          foto: foto || row.foto,
+          foto: foto || imgurResponse.data.link, // Utiliza el enlace de Imgur
         };
 
         res.status(200).json({

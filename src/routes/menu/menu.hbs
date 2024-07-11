@@ -67,19 +67,19 @@
 </head>
 <body>
     <div class="menu-container">
-        <img class="menu-banner" src="../../images/menu/banner/{{banner}}" alt="Banner del Menú">
+        <img class="menu-banner" src="{{banner}}" alt="Banner del Menú">
         <h1>{{nombre}}</h1>
         {{#each categorias}}
             <div class="categoria">
                 {{#if foto}}
-                    <img src="../../images/menu/categorias/{{foto}}" alt="{{categoria}}">
+                    <img src="{{foto}}" alt="{{categoria}}">
                 {{/if}}
                 <h2>{{categoria}}</h2>
                 <ul>
                     {{#each platillos}}
                         <li class="platillo">
                             {{#if foto}}
-                                <img src="../../images/menu/platillos/{{foto}}" alt="{{nombre}}">
+                                <img src="{{foto}}" alt="{{nombre}}">
                             {{/if}}
                             {{nombre}}
                         </li>

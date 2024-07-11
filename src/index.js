@@ -24,6 +24,7 @@ const postPedidos = require("./routes/pedidos/postPedidos");
 const putPedidos = require("./routes/pedidos/putPedidos");
 const deletePedidos = require("./routes/pedidos/deletePedidos");
 const getPedidos = require('./routes/pedidos/getPedidos')
+const uploadRoute = require('./imgur')
 const app = express();
 
 // Middleware para analizar datos JSON
@@ -33,6 +34,8 @@ app.use(express.json());
 app.use(cors());
 // resetInventario();
 // Rutas
+
+app.use('/api', uploadRoute);
 app.use(putPedidos);
 app.use(userRoutes);
 app.use(login);

@@ -1,8 +1,10 @@
+// editCategoria.js
 const express = require("express");
 const db = require("../../../conexionDB");
 const jwt = require("jsonwebtoken");
-require("dotenv").config();
 const multer = require("multer");
+const uploadToImgur = require('../../../controllers/imgurUploader');
+require("dotenv").config();
 const router = express.Router();
 
 // Verificar el token
@@ -35,12 +37,14 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
+
 const upload = multer({ storage: storage });
 
 router.put("/editCategoria/:id", verificarToken, upload.single("foto"), async (req, res) => {
   const categoriaId = req.params.id;
   const { nombre, descripcion, platillos } = req.body;
 
+  // Construir la consulta de actualización
   let updateFields = [];
   let params = [];
 
@@ -60,7 +64,9 @@ router.put("/editCategoria/:id", verificarToken, upload.single("foto"), async (r
     params.push(platillosJSON);
   }
 
-  const foto = req.file ? req.file.path : null;
+  // Subir imagen a Imgur si se proporciona
+  const foto = req.file ? await uploadToImgur(req.file.buffer, req.file.originalname) : null;
+
   if (foto) {
     updateFields.push('foto = ?');
     params.push(foto);
